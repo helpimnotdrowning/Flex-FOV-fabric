@@ -4,7 +4,7 @@ import net.id107.flexfov.ConfigManager;
 import net.id107.flexfov.projection.Panini;
 import net.id107.flexfov.projection.Projection;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.DoubleOption;
+import net.minecraft.client.option.DoubleOption;
 import net.minecraft.text.LiteralText;
 
 public class PaniniGui extends AdvancedGui {
@@ -22,6 +22,6 @@ public class PaniniGui extends AdvancedGui {
 				(gameOptions) -> {return Projection.getProjection().getFovX();},
 				(gameOptions, number) -> {Projection.fov = number; ConfigManager.saveConfig();},
 				(gameOptions, doubleOption) -> {return new LiteralText("FOV: " + (int)Projection.getProjection().getFovX());});
-		addButton(FOV.createButton(client.options, width / 2 - 180, height / 6 + 60, 360));
+		addDrawableChild(FOV.createButton(client.options, width / 2 - 180, height / 6 + 60, 360));
 	}
 }

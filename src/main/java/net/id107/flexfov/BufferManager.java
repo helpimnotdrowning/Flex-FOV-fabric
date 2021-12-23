@@ -5,12 +5,13 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
+//import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.util.Window;
 
 public class BufferManager {
 
-	private static Framebuffer framebuffer;
+	private static SimpleFramebuffer framebuffer;
 	public static int[] framebufferTextures = new int[6];
 	
 	private static float minX;
@@ -36,7 +37,7 @@ public class BufferManager {
 		
 		Window window = MinecraftClient.getInstance().getWindow();
 		int width = Math.min(window.getWidth(), window.getHeight());
-		framebuffer = new Framebuffer(width, width, false, false);
+		framebuffer = new SimpleFramebuffer(width, width, false, false);
 		
 		for (int i = 0; i < framebufferTextures.length; i++) {
 			framebufferTextures[i] = GL11.glGenTextures();
@@ -85,7 +86,7 @@ public class BufferManager {
 		framebuffer = null;
 	}
 	
-	public static Framebuffer getFramebuffer() {
+	public static SimpleFramebuffer getFramebuffer() {
 		return framebuffer;
 	}
 

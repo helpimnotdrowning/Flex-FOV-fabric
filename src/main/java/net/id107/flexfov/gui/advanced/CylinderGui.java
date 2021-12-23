@@ -4,7 +4,7 @@ import net.id107.flexfov.ConfigManager;
 import net.id107.flexfov.projection.Cylinder;
 import net.id107.flexfov.projection.Projection;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.DoubleOption;
+import net.minecraft.client.option.DoubleOption;
 import net.minecraft.text.LiteralText;
 
 public class CylinderGui extends AdvancedGui {
@@ -22,12 +22,12 @@ public class CylinderGui extends AdvancedGui {
 				(gameOptions) -> {return Projection.getProjection().getFovX();},
 				(gameOptions, number) -> {Projection.fov = number; ConfigManager.saveConfig();},
 				(gameOptions, doubleOption) -> {return new LiteralText("Horizontal FOV: " + Math.round(Projection.getProjection().getFovX()));});
-		addButton(FOVX.createButton(client.options, width / 2 - 180, height / 6 + 60, 360));
+		addDrawableChild(FOVX.createButton(client.options, width / 2 - 180, height / 6 + 60, 360));
 		
 		DoubleOption FOVY = new DoubleOption("cylinderFovY", 0, 180, 1,
 				(gameOptions) -> {return Projection.getProjection().getFovY();},
 				(gameOptions, number) -> {Cylinder.fovy = number; ConfigManager.saveConfig();},
 				(gameOptions, doubleOption) -> {return new LiteralText("Vertical FOV: " + Math.round(Projection.getProjection().getFovY()));});
-		addButton(FOVY.createButton(client.options, width / 2 - 180, height / 6 + 84, 180));
+		addDrawableChild(FOVY.createButton(client.options, width / 2 - 180, height / 6 + 84, 180));
 	}
 }

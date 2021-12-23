@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL20;
 
 import net.id107.flexfov.Reader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.Perspective;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
 
 public class Equirectangular extends Projection {
@@ -32,10 +32,10 @@ public class Equirectangular extends Projection {
 		float pitch = 0;
 		float yaw = 0;
 		if (stabilizePitch) {
-			pitch = entity.prevPitch + (entity.pitch - entity.prevPitch) * tickDelta;
+			pitch = entity.prevPitch + (entity.getPitch() - entity.prevPitch) * tickDelta;
 		}
 		if (stabilizeYaw) {
-			yaw = entity.prevYaw + (entity.yaw - entity.prevYaw) * tickDelta;
+			yaw = entity.prevYaw + (entity.getYaw() - entity.prevYaw) * tickDelta;
 		}
 		if (mc.options.getPerspective() == Perspective.THIRD_PERSON_FRONT) {
 			pitch = -pitch;

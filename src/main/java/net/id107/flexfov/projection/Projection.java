@@ -3,8 +3,9 @@ package net.id107.flexfov.projection;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
-import com.mojang.blaze3d.platform.FramebufferInfo;
+//import com.mojang.blaze3d.platform.FramebufferInfo;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -12,6 +13,7 @@ import net.id107.flexfov.BufferManager;
 import net.id107.flexfov.Reader;
 import net.id107.flexfov.ShaderManager;
 import net.id107.flexfov.gui.SettingsGui;
+import net.id107.flexfov.projection.CursedRenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.util.Window;
@@ -115,23 +117,23 @@ public abstract class Projection {
 			break;
 		case 1:
 			matrix = new Matrix4f(new Quaternion(0, 0.707106781f, 0, 0.707106781f)); //look right
-			matrixStack.peek().getModel().multiply(matrix);
+			matrixStack.peek().getPositionMatrix().multiply(matrix);
 			break;
 		case 2:
 			matrix = new Matrix4f(new Quaternion(0, -0.707106781f, 0, 0.707106781f)); //look left
-			matrixStack.peek().getModel().multiply(matrix);
+			matrixStack.peek().getPositionMatrix().multiply(matrix);
 			break;
 		case 3:
 			matrix = new Matrix4f(new Quaternion(0.707106781f, 0, 0, 0.707106781f)); //look down
-			matrixStack.peek().getModel().multiply(matrix);
+			matrixStack.peek().getPositionMatrix().multiply(matrix);
 			break;
 		case 4:
 			matrix = new Matrix4f(new Quaternion(-0.707106781f, 0, 0, 0.707106781f)); //look up
-			matrixStack.peek().getModel().multiply(matrix);
+			matrixStack.peek().getPositionMatrix().multiply(matrix);
 			break;
 		case 5:
 			matrix = new Matrix4f(new Quaternion(0, -1, 0, 0)); //look back
-			matrixStack.peek().getModel().multiply(matrix);
+			matrixStack.peek().getPositionMatrix().multiply(matrix);
 			break;
 		}
 	}
@@ -140,13 +142,13 @@ public abstract class Projection {
 		if (getResizeGui() && renderPass == 0) {
 			MinecraftClient mc = MinecraftClient.getInstance();
 			Window window = mc.getWindow();
-			RenderSystem.matrixMode(5889);
-			RenderSystem.loadIdentity();
-			RenderSystem.ortho(0.0D, (double)window.getFramebufferWidth() / window.getScaleFactor(), (double)window.getFramebufferHeight() / window.getScaleFactor(), 0.0D, 1000.0D, 3000.0D);
-			RenderSystem.matrixMode(5888);
-			RenderSystem.loadIdentity();
-			RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-			RenderSystem.defaultAlphaFunc();
+			CursedRenderSystem.matrixMode(5889);
+			CursedRenderSystem.loadIdentity();
+			CursedRenderSystem.ortho(0.0D, (double)window.getFramebufferWidth() / window.getScaleFactor(), (double)window.getFramebufferHeight() / window.getScaleFactor(), 0.0D, 1000.0D, 3000.0D);
+			CursedRenderSystem.matrixMode(5888);
+			CursedRenderSystem.loadIdentity();
+			CursedRenderSystem.translatef(0.0F, 0.0F, -2000.0F);
+			CursedRenderSystem.defaultAlphaFunc();
 			RenderSystem.clear(256, MinecraftClient.IS_SYSTEM_MAC);
 			MatrixStack matrixStack = new MatrixStack();
 			mc.inGameHud.render(matrixStack, tickDelta);
@@ -161,9 +163,9 @@ public abstract class Projection {
 		Framebuffer defaultFramebuffer = MinecraftClient.getInstance().getFramebuffer();
 		Framebuffer targetFramebuffer = BufferManager.getFramebuffer();
 		
-		GlStateManager.bindFramebuffer(FramebufferInfo.FRAME_BUFFER, targetFramebuffer.fbo);
+		GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, targetFramebuffer.fbo);
 		GL11.glViewport(0, 0, targetFramebuffer.textureWidth, targetFramebuffer.textureHeight);
-		GlStateManager.framebufferTexture2D(FramebufferInfo.FRAME_BUFFER, FramebufferInfo.COLOR_ATTACHMENT,
+		GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
 				GL11.GL_TEXTURE_2D, BufferManager.framebufferTextures[renderPass], 0);
 		
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -195,7 +197,7 @@ public abstract class Projection {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPopMatrix();
 		
-		GlStateManager.bindFramebuffer(FramebufferInfo.FRAME_BUFFER, defaultFramebuffer.fbo);
+		GlStateManager._glBindFramebuffer(GL30.GL_FRAMEBUFFER, defaultFramebuffer.fbo);
 	}
 	
 	public void loadUniforms(float tickDelta) {
@@ -367,4 +369,7 @@ public abstract class Projection {
 		double displayHeight = MinecraftClient.getInstance().getWindow().getHeight();
 		return getFovX()*displayHeight/displayWidth;
 	}
+    
+    //from RenderSystem
+
 }

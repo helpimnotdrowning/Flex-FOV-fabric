@@ -16,7 +16,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
-@Mixin(GameRenderer.class)
+@Mixin(value = GameRenderer.class, priority = 0)
 public abstract class GameRendererMixin {
 	@Shadow final MinecraftClient client;
 	@Shadow boolean renderingPanorama;
