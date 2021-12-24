@@ -16,7 +16,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
-@Mixin(value = GameRenderer.class, priority = 0)
+@Mixin(value = GameRenderer.class, priority = 9999)
 public abstract class GameRendererMixin {
 	@Shadow final MinecraftClient client;
 	@Shadow boolean renderingPanorama;
@@ -26,12 +26,12 @@ public abstract class GameRendererMixin {
 	public GameRendererMixin() {
 		client = null;
 	}
-	
+
 	@Inject(method = "getFov(Lnet/minecraft/client/render/Camera;FZ)D", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
 	private void panoramaFov(CallbackInfoReturnable<Double> callbackInfo) {
 		callbackInfo.setReturnValue((double)Projection.getProjection().getPassFOV(90));
 	}
-	
+
 	@Inject(method = "render(FJZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V", ordinal = 0))
 	private void renderPre(float tickDelta, long startTime, boolean tick, CallbackInfo callbackInfo) {
 		renderingPanoramaTemp = renderingPanorama;
@@ -40,8 +40,7 @@ public abstract class GameRendererMixin {
 		client.options.fov = Projection.getProjection().getPassFOV(fovTemp);
 		Projection.getProjection().renderWorld(tickDelta, startTime, tick);
 	}
-	
-	@Inject(method = "render(FJZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;isIntegratedServerRunning()Z", ordinal = 0))
+	@Inject(method = "render(FJZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;updateWorldIcon()V", ordinal = 0))
 	private void renderPost(float tickDelta, long startTime, boolean tick, CallbackInfo callbackInfo) {
 		renderingPanorama = renderingPanoramaTemp;
 		client.options.fov = fovTemp;

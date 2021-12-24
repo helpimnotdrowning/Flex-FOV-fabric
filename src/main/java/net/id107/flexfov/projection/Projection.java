@@ -1,5 +1,6 @@
 package net.id107.flexfov.projection;
 
+import net.id107.flexfov.mixin.RenderSystemMixin;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -43,6 +44,8 @@ public abstract class Projection {
 	
 	private static int screenWidth;
 	private static int screenHeight;
+
+	CursedRenderSystem renderSystem = new CursedRenderSystem();
 	
 	public static Projection getProjection() {
 		if (currentProjection == null) {
@@ -142,13 +145,13 @@ public abstract class Projection {
 		if (getResizeGui() && renderPass == 0) {
 			MinecraftClient mc = MinecraftClient.getInstance();
 			Window window = mc.getWindow();
-			CursedRenderSystem.matrixMode(5889);
-			CursedRenderSystem.loadIdentity();
-			CursedRenderSystem.ortho(0.0D, (double)window.getFramebufferWidth() / window.getScaleFactor(), (double)window.getFramebufferHeight() / window.getScaleFactor(), 0.0D, 1000.0D, 3000.0D);
-			CursedRenderSystem.matrixMode(5888);
-			CursedRenderSystem.loadIdentity();
-			CursedRenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-			CursedRenderSystem.defaultAlphaFunc();
+			renderSystem.matrixMode(5889);
+			renderSystem.loadIdentity();
+			renderSystem.ortho(0.0D, (double)window.getFramebufferWidth() / window.getScaleFactor(), (double)window.getFramebufferHeight() / window.getScaleFactor(), 0.0D, 1000.0D, 3000.0D);
+			renderSystem.matrixMode(5888);
+			renderSystem.loadIdentity();
+			renderSystem.translatef(0.0F, 0.0F, -2000.0F);
+			renderSystem.defaultAlphaFunc();
 			RenderSystem.clear(256, MinecraftClient.IS_SYSTEM_MAC);
 			MatrixStack matrixStack = new MatrixStack();
 			mc.inGameHud.render(matrixStack, tickDelta);
@@ -168,16 +171,17 @@ public abstract class Projection {
 		GlStateManager._glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
 				GL11.GL_TEXTURE_2D, BufferManager.framebufferTextures[renderPass], 0);
 		
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		//GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		RenderSystem.clear(GL11.GL_COLOR_BUFFER_BIT, false);
+		renderSystem.matrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
-		GL11.glLoadIdentity();
+		renderSystem.loadIdentity();
 		GL11.glOrtho(-1, 1, -1, 1, -1, 1);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		renderSystem.matrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
-		GL11.glLoadIdentity();
+		renderSystem.loadIdentity();
 		
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, defaultFramebuffer.getColorAttachment());
+		RenderSystem.bindTexture(defaultFramebuffer.getColorAttachment());
 		GL11.glBegin(GL11.GL_QUADS);
 		{
 			GL11.glTexCoord2f(BufferManager.getMinX(), BufferManager.getMinY());

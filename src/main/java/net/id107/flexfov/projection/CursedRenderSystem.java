@@ -1,43 +1,67 @@
 package net.id107.flexfov.projection;
 
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL11;
+
+import net.id107.flexfov.access.GlStateManagerAccess;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class CursedRenderSystem {
     public static final String APOLOGY = "im so sorry";
-    
-    public static void matrixMode(int mode) {
+    MatrixStack matrixStack = new MatrixStack();
+    private RenderSystem renderSystem;
+    //private Object RenderSystem;
+
+    public void pushMatrix() {
+
+    }
+
+
+
+    public void matrixMode(int mode) {
+        ((GlStateManagerAccess)renderSystem).matrixMode(mode);
+        /*
         RenderSystem.assertOnGameThread();
         //now from GlStateManager
         RenderSystem.assertOnRenderThreadOrInit();
-        GL30.glMatrixMode(mode);
+        GL11.glMatrixMode(mode);
+        */
     }
-    
-    public static void loadIdentity() {
+
+    public void loadIdentity() {
+        matrixStack.loadIdentity();
+        /*
         RenderSystem.assertOnGameThread();
         //now from GlStateManager
         RenderSystem.assertOnRenderThreadOrInit();
         GL30.glLoadIdentity();
+        */
     }
     
-    public static void ortho(double l, double r, double b, double t, double n, double f) {
+    public void ortho(double l, double r, double b, double t, double n, double f) {
+        System.out.println("FUCK YOU!!!!!");
+        /*
         RenderSystem.assertOnGameThread();
         //now from GlStateManager
         RenderSystem.assertOnRenderThreadOrInit();
-        GL30.glOrtho(l, r, b, t, n, f);
+        GL30.glOrtho(l, r, b, t, n, f);*/
     }
-    
-    public static void translatef(float x, float y, float z) {
+
+    public void translatef(float x, float y, float z) {
+        matrixStack.translate(x, y, z);
+        /*
         RenderSystem.assertOnGameThread();
         //now from GlStateManager
         RenderSystem.assertOnRenderThreadOrInit();
         GL30.glTranslatef(x, y, z);
+        */
     }
-    
+
     @Environment(value=EnvType.CLIENT)
     static class CapabilityTracker {
         private final int cap;
@@ -67,8 +91,7 @@ public class CursedRenderSystem {
             }
         }
     }
-    
-    
+
     @Environment(value=EnvType.CLIENT)
     static class AlphaTestState {
         public final CapabilityTracker capState = new CapabilityTracker(3008);
@@ -81,7 +104,7 @@ public class CursedRenderSystem {
     
     private static final AlphaTestState ALPHA_TEST = new AlphaTestState();
     
-    public static void alphaFunc(int func, float ref) {
+    public void alphaFunc(int func, float ref) {
         RenderSystem.assertOnGameThread();
         //now from GlStateManager
         RenderSystem.assertOnRenderThreadOrInit();
@@ -92,7 +115,7 @@ public class CursedRenderSystem {
         }
     }
     
-    public static void defaultAlphaFunc() {
+    public void defaultAlphaFunc() {
         alphaFunc(516, 0.1f);
     }
 }
